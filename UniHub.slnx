@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="UniHub.BL/UniHub.BL.csproj" Id="5de41b4a-28ef-4afa-9f8e-27260a47c22e" />
+  <Project Path="UniHub.DAL/UniHub.DAL.csproj" Id="94d6202b-410c-4542-b843-7411d45546bd" />
+  <Project Path="UniHub.UI/UniHub.UI.csproj" />
+</Solution>

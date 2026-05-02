@@ -1,0 +1,45 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using UniHub.BL.Entities
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<ul class="navbar-nav">
+@if (SignInManager.IsSignedIn(User))
+{
+    var currentUser = await UserManager.GetUserAsync(User);
+    var displayName = !string.IsNullOrEmpty(currentUser?.FirstName) 
+        ? $"{currentUser.FirstName} {currentUser.LastName}" 
+        : User.Identity?.Name;
+
+    <li class="nav-item d-flex align-items-center">
+        @if (currentUser?.ProfilePicture != null && currentUser.ProfilePicture.Length > 0)
+        {
+            <img src="data:image/jpeg;base64,@Convert.ToBase64String(currentUser.ProfilePicture)" 
+                 alt="Profile" 
+                 class="rounded-circle me-2" 
+                 style="width: 35px; height: 35px; object-fit: cover;" />
+        }
+        else
+        {
+            <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-2" 
+                 style="width: 35px; height: 35px; font-size: 16px;">
+                @(currentUser?.FirstName?.Substring(0, 1).ToUpper() ?? "U")
+            </div>
+        }
+        <a class="nav-link text-dark p-0" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+            Hello @displayName!
+        </a>
+    </li>
+    <li class="nav-item">
+        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+            <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+        </form>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
+    </li>
+}
+</ul>

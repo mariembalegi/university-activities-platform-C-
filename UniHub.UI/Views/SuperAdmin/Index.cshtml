@@ -1,0 +1,67 @@
+@model UniHub.UI.ViewModels.DashboardStatsViewModel
+@{
+    ViewData["Title"] = "Dashboard Super Admin";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4"><i class="bi bi-speedometer2"></i> Dashboard Super Admin</h1>
+
+    <!-- Statistiques -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-people-fill"></i> Total Utilisateurs</h5>
+                    <h2 class="card-text">@Model.TotalUsers</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-person-badge"></i> Étudiants</h5>
+                    <h2 class="card-text">@Model.TotalStudents</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-shield-check"></i> Admins Départ.</h5>
+                    <h2 class="card-text">@Model.TotalDepartmentAdmins</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-calendar-event"></i> Activités</h5>
+                    <h2 class="card-text">@Model.TotalActivities</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions rapides -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="bi bi-lightning-fill"></i> Actions Rapides</h4>
+                </div>
+                <div class="card-body">
+                    <a asp-action="CreateUser" class="btn btn-primary me-2">
+                        <i class="bi bi-person-plus"></i> Créer un Utilisateur
+                    </a>
+                    <a asp-action="Users" class="btn btn-secondary">
+                        <i class="bi bi-list"></i> Gérer les Utilisateurs
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+}

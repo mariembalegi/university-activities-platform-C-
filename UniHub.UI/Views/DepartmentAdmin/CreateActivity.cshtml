@@ -1,0 +1,90 @@
+@model UniHub.UI.ViewModels.ActivityViewModel
+@{
+    ViewData["Title"] = "Créer une Activité";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4"><i class="bi bi-plus-circle"></i> Créer une Activité</h1>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form asp-action="CreateActivity" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label"></label>
+                            <input asp-for="Title" class="form-control" placeholder="Ex: Conférence sur l'Intelligence Artificielle" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label"></label>
+                            <textarea asp-for="Description" class="form-control" rows="5" 
+                                      placeholder="Décrivez l'activité en détail..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="StartDate" class="form-label"></label>
+                                <input asp-for="StartDate" class="form-control" type="datetime-local" />
+                                <span asp-validation-for="StartDate" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="EndDate" class="form-label"></label>
+                                <input asp-for="EndDate" class="form-control" type="datetime-local" />
+                                <span asp-validation-for="EndDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Location" class="form-label"></label>
+                            <input asp-for="Location" class="form-control" placeholder="Ex: Amphithéâtre A, Salle 101" />
+                            <span asp-validation-for="Location" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="MaxParticipants" class="form-label"></label>
+                            <input asp-for="MaxParticipants" class="form-control" type="number" min="1" 
+                                   placeholder="Laisser vide pour illimité" />
+                            <span asp-validation-for="MaxParticipants" class="text-danger"></span>
+                            <div class="form-text">Nombre maximum de participants autorisés (optionnel)</div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle"></i> Créer l'Activité
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-info-circle"></i> Conseils</h5>
+                    <ul class="small">
+                        <li>Choisissez un titre clair et accrocheur</li>
+                        <li>Décrivez précisément le contenu de l'activité</li>
+                        <li>Indiquez la date et l'heure exactes</li>
+                        <li>Précisez le lieu pour faciliter la participation</li>
+                        <li>Limitez le nombre de participants si nécessaire</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+}
