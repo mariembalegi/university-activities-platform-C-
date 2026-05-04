@@ -34,6 +34,8 @@ namespace UniHub.UI.Controllers
                     .Where(a => a.Department == user.Department && a.IsPublished)
                     .Include(a => a.CreatedByUser)
                     .Include(a => a.Inscriptions)
+                    .Include(a => a.Comments)
+                        .ThenInclude(c => c.User)
                     .OrderByDescending(a => a.StartDate)
                     .ToListAsync()
                 : new List<Activity>();
@@ -148,6 +150,55 @@ namespace UniHub.UI.Controllers
             await _context.SaveChangesAsync();
 
             TempData["Success"] = "Désinscription réussie !";
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Ajouter un commentaire
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddComment(int activityId, string content)
+        {
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                TempData["Error"] = "Le commentaire ne peut pas être vide.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("AccessDenied", "Account", new { area = "Identity" });
+            }
+
+            var activity = _context.Activities != null
+                ? await _context.Activities.FindAsync(activityId)
+                : null;
+
+            if (activity == null)
+            {
+                TempData["Error"] = "Activité introuvable.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Vérifier que l'étudiant appartient au même département que l'activité
+            if (user.Department != activity.Department)
+            {
+                TempData["Error"] = "Vous ne pouvez commenter que les activités de votre département.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var comment = new Comment
+            {
+                Content = content,
+                ActivityId = activityId,
+                UserId = user.Id,
+                CreatedDate = DateTime.Now
+            };
+
+            _context.Comments?.Add(comment);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Commentaire ajouté avec succès !";
             return RedirectToAction(nameof(Index));
         }
     }

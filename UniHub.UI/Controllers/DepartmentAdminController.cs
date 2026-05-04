@@ -35,6 +35,8 @@ namespace UniHub.UI.Controllers
                     .Include(a => a.CreatedByUser)
                     .Include(a => a.Inscriptions)
                         .ThenInclude(i => i.User)
+                    .Include(a => a.Comments)
+                        .ThenInclude(c => c.User)
                     .OrderByDescending(a => a.StartDate)
                     .ToListAsync()
                 : new List<Activity>();

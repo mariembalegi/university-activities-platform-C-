@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UniHub.DAL;
 
@@ -11,9 +12,11 @@ using UniHub.DAL;
 namespace UniHub.DAL.Migrations
 {
     [DbContext(typeof(UniHubDbContext))]
-    partial class UniHubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260504121410_AddCommentsToActivities")]
+    partial class AddCommentsToActivities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

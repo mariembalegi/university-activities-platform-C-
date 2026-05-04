@@ -1,3 +1,4 @@
+@using UniHub.UI.Extensions
 @model List<UniHub.BL.Entities.Activity>
 @{
     ViewData["Title"] = "Dashboard Administrateur Départemental";
@@ -6,7 +7,7 @@
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1><i class="bi bi-briefcase"></i> Dashboard Admin - Département @userDept</h1>
+        <h1><i class="bi bi-briefcase"></i> Dashboard Admin - Département @userDept.GetDisplayName()</h1>
         <a asp-action="CreateActivity" class="btn btn-primary">
             <i class="bi bi-plus-circle"></i> Créer une Activité
         </a>
@@ -125,6 +126,36 @@
                                                             </li>
                                                         }
                                                     </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    @* Section Commentaires (lecture seule pour les admins) *@
+                                    @{
+                                        var commentsCount = activity.Comments?.Count ?? 0;
+                                    }
+                                    @if (commentsCount > 0)
+                                    {
+                                        <div class="mb-3">
+                                            <button class="btn btn-sm btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#comments-@activity.Id">
+                                                <i class="bi bi-chat-dots"></i> Voir les commentaires (@commentsCount)
+                                            </button>
+                                            <div class="collapse mt-2" id="comments-@activity.Id">
+                                                <div class="card card-body">
+                                                    <h6>Commentaires des étudiants :</h6>
+                                                    <div class="list-group list-group-flush" style="max-height: 300px; overflow-y: auto;">
+                                                        @foreach (var comment in (activity.Comments ?? new List<UniHub.BL.Entities.Comment>()).OrderByDescending(c => c.CreatedDate))
+                                                        {
+                                                            <div class="list-group-item">
+                                                                <div class="d-flex justify-content-between">
+                                                                    <strong><i class="bi bi-person-circle"></i> @comment.User?.FullName</strong>
+                                                                    <small class="text-muted">@comment.CreatedDate.ToString("dd/MM/yyyy HH:mm")</small>
+                                                                </div>
+                                                                <p class="mb-0 mt-1">@comment.Content</p>
+                                                            </div>
+                                                        }
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

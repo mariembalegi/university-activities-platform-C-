@@ -9,6 +9,7 @@ namespace UniHub.DAL
     {
         public DbSet<Activity>? Activities { get; set; }
         public DbSet<Inscription>? Inscriptions { get; set; }
+        public DbSet<Comment>? Comments { get; set; }
 
         public UniHubDbContext(DbContextOptions<UniHubDbContext> options)
             : base(options)
@@ -100,6 +101,22 @@ namespace UniHub.DAL
                 // Empêcher les inscriptions en double
                 entity.HasIndex(i => new { i.ActivityId, i.UserId })
                     .IsUnique();
+            });
+
+            // Configure Comment
+            builder.Entity<Comment>(entity =>
+            {
+                entity.ToTable("Comments");
+
+                entity.HasOne(c => c.Activity)
+                    .WithMany(a => a.Comments)
+                    .HasForeignKey(c => c.ActivityId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(c => c.User)
+                    .WithMany(u => u.Comments)
+                    .HasForeignKey(c => c.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

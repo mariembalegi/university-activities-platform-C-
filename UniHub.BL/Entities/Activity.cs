@@ -57,5 +57,7 @@ namespace UniHub.BL.Entities
         public virtual ApplicationUser CreatedByUser { get; set; }
 
         public virtual ICollection<Inscription> Inscriptions { get; set; } = new List<Inscription>();
+
+        public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
     }
 }

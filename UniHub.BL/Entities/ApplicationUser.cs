@@ -32,6 +32,9 @@ namespace UniHub.BL.Entities
         // Navigation property - Un étudiant peut avoir plusieurs inscriptions
         public virtual ICollection<Inscription> Inscriptions { get; set; } = new List<Inscription>();
 
+        // Navigation property - Un utilisateur peut avoir plusieurs commentaires
+        public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
         [NotMapped]
         [Display(Name = "Nom complet")]
         public string FullName => $"{FirstName} {LastName}";
