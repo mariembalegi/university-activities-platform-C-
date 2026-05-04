@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace UniHub.UI.ViewModels
 {
@@ -30,5 +31,10 @@ namespace UniHub.UI.ViewModels
 
         [Display(Name = "Nombre maximum de participants")]
         public int? MaxParticipants { get; set; }
+
+        [Display(Name = "Image de l'événement")]
+        public IFormFile? EventImage { get; set; }
+
+        public byte[]? ExistingEventImage { get; set; }
     }
 }

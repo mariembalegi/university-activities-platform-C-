@@ -29,6 +29,9 @@ namespace UniHub.BL.Entities
         // Navigation property - Un admin peut créer plusieurs activités
         public virtual ICollection<Activity> CreatedActivities { get; set; } = new List<Activity>();
 
+        // Navigation property - Un étudiant peut avoir plusieurs inscriptions
+        public virtual ICollection<Inscription> Inscriptions { get; set; } = new List<Inscription>();
+
         [NotMapped]
         [Display(Name = "Nom complet")]
         public string FullName => $"{FirstName} {LastName}";

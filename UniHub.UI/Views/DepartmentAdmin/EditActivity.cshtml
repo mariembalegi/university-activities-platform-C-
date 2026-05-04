@@ -10,7 +10,7 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-body">
-                    <form asp-action="EditActivity" method="post">
+                    <form asp-action="EditActivity" method="post" enctype="multipart/form-data">
                         <input type="hidden" asp-for="Id" />
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
@@ -51,6 +51,24 @@
                             <input asp-for="MaxParticipants" class="form-control" type="number" min="1" />
                             <span asp-validation-for="MaxParticipants" class="text-danger"></span>
                             <div class="form-text">Nombre maximum de participants autorisés (optionnel)</div>
+                        </div>
+
+                        @if (Model.ExistingEventImage != null)
+                        {
+                            <div class="mb-3">
+                                <label class="form-label">Image actuelle</label>
+                                <div>
+                                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.ExistingEventImage)" 
+                                         alt="Event Image" style="max-width: 300px; max-height: 300px;" class="img-thumbnail" />
+                                </div>
+                            </div>
+                        }
+
+                        <div class="mb-3">
+                            <label asp-for="EventImage" class="form-label"></label>
+                            <input asp-for="EventImage" class="form-control" type="file" accept="image/*" />
+                            <span asp-validation-for="EventImage" class="text-danger"></span>
+                            <div class="form-text">Taille maximale : 5 MB. Laissez vide pour conserver l'image actuelle.</div>
                         </div>
 
                         <div class="d-grid gap-2">

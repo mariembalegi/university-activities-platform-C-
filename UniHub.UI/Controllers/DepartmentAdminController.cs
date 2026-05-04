@@ -33,6 +33,8 @@ namespace UniHub.UI.Controllers
                 ? await _context.Activities
                     .Where(a => a.Department == user.Department)
                     .Include(a => a.CreatedByUser)
+                    .Include(a => a.Inscriptions)
+                        .ThenInclude(i => i.User)
                     .OrderByDescending(a => a.StartDate)
                     .ToListAsync()
                 : new List<Activity>();
@@ -61,6 +63,22 @@ namespace UniHub.UI.Controllers
 
             if (ModelState.IsValid)
             {
+                byte[]? imageData = null;
+                if (model.EventImage != null && model.EventImage.Length > 0)
+                {
+                    if (model.EventImage.Length > 5 * 1024 * 1024)
+                    {
+                        ModelState.AddModelError("EventImage", "La taille de l'image ne doit pas dépasser 5 MB.");
+                        return View(model);
+                    }
+
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await model.EventImage.CopyToAsync(memoryStream);
+                        imageData = memoryStream.ToArray();
+                    }
+                }
+
                 var activity = new Activity
                 {
                     Title = model.Title,
@@ -72,7 +90,8 @@ namespace UniHub.UI.Controllers
                     Department = user.Department.Value,
                     CreatedByUserId = user.Id,
                     CreatedDate = DateTime.Now,
-                    IsPublished = true
+                    IsPublished = true,
+                    EventImage = imageData
                 };
 
                 _context.Activities?.Add(activity);
@@ -104,7 +123,8 @@ namespace UniHub.UI.Controllers
                 StartDate = activity.StartDate,
                 EndDate = activity.EndDate,
                 Location = activity.Location,
-                MaxParticipants = activity.MaxParticipants
+                MaxParticipants = activity.MaxParticipants,
+                ExistingEventImage = activity.EventImage
             };
 
             return View(model);
@@ -125,6 +145,22 @@ namespace UniHub.UI.Controllers
 
             if (ModelState.IsValid)
             {
+                if (model.EventImage != null && model.EventImage.Length > 0)
+                {
+                    if (model.EventImage.Length > 5 * 1024 * 1024)
+                    {
+                        ModelState.AddModelError("EventImage", "La taille de l'image ne doit pas dépasser 5 MB.");
+                        model.ExistingEventImage = activity.EventImage;
+                        return View(model);
+                    }
+
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await model.EventImage.CopyToAsync(memoryStream);
+                        activity.EventImage = memoryStream.ToArray();
+                    }
+                }
+
                 activity.Title = model.Title;
                 activity.Description = model.Description;
                 activity.StartDate = model.StartDate;

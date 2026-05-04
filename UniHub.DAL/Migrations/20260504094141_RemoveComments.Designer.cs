@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UniHub.DAL;
 
@@ -11,9 +12,11 @@ using UniHub.DAL;
 namespace UniHub.DAL.Migrations
 {
     [DbContext(typeof(UniHubDbContext))]
-    partial class UniHubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260504094141_RemoveComments")]
+    partial class RemoveComments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -298,37 +301,6 @@ namespace UniHub.DAL.Migrations
                     b.ToTable("User", "Identity");
                 });
 
-            modelBuilder.Entity("UniHub.BL.Entities.Inscription", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ActivityId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("InscriptionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("ActivityId", "UserId")
-                        .IsUnique();
-
-                    b.ToTable("Inscriptions", "Identity");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -391,35 +363,9 @@ namespace UniHub.DAL.Migrations
                     b.Navigation("CreatedByUser");
                 });
 
-            modelBuilder.Entity("UniHub.BL.Entities.Inscription", b =>
-                {
-                    b.HasOne("UniHub.BL.Entities.Activity", "Activity")
-                        .WithMany("Inscriptions")
-                        .HasForeignKey("ActivityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("UniHub.BL.Entities.ApplicationUser", "User")
-                        .WithMany("Inscriptions")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Activity");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("UniHub.BL.Entities.Activity", b =>
-                {
-                    b.Navigation("Inscriptions");
-                });
-
             modelBuilder.Entity("UniHub.BL.Entities.ApplicationUser", b =>
                 {
                     b.Navigation("CreatedActivities");
-
-                    b.Navigation("Inscriptions");
                 });
 #pragma warning restore 612, 618
         }

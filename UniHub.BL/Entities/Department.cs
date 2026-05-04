@@ -16,7 +16,7 @@ namespace UniHub.BL.Entities
         [Display(Name = "Génie Mécanique")]
         GM = 4,
 
-        [Display(Name = "Génie des Technologies de l'Information et de la Communication")]
+        [Display(Name = "TIC")]
         GTIC = 5
     }
 }

@@ -73,7 +73,7 @@ namespace UniHub.DAL
                 new { Email = "gc-admin@enit.utm.tn", Username = "gc-admin", FirstName = "Admin", LastName = "GC", Department = Department.GC },
                 new { Email = "ge-admin@enit.utm.tn", Username = "ge-admin", FirstName = "Admin", LastName = "GE", Department = Department.GE },
                 new { Email = "gm-admin@enit.utm.tn", Username = "gm-admin", FirstName = "Admin", LastName = "GM", Department = Department.GM },
-                new { Email = "gtic-admin@enit.utm.tn", Username = "gtic-admin", FirstName = "Admin", LastName = "GTIC", Department = Department.GTIC }
+                new { Email = "gtic-admin@enit.utm.tn", Username = "gtic-admin", FirstName = "Admin", LastName = "TIC", Department = Department.GTIC }
             };
 
             foreach (var adminData in departmentAdmins)

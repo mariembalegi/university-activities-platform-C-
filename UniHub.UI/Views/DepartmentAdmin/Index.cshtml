@@ -73,6 +73,11 @@
                                     }
                                 </div>
                                 <div class="card-body">
+                                    @if (activity.EventImage != null)
+                                    {
+                                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(activity.EventImage)" 
+                                             alt="@activity.Title" class="img-fluid mb-3 rounded" style="max-height: 200px; width: 100%; object-fit: cover;" />
+                                    }
                                     <p class="card-text">@activity.Description</p>
                                     <ul class="list-unstyled mb-3">
                                         <li><i class="bi bi-calendar"></i> <strong>Début:</strong> @activity.StartDate.ToString("dd/MM/yyyy HH:mm")</li>
@@ -84,11 +89,46 @@
                                         {
                                             <li><i class="bi bi-geo-alt"></i> <strong>Lieu:</strong> @activity.Location</li>
                                         }
-                                        @if (activity.MaxParticipants.HasValue)
-                                        {
-                                            <li><i class="bi bi-people"></i> <strong>Participants max:</strong> @activity.MaxParticipants</li>
+                                        @{
+                                            var currentParticipants = activity.Inscriptions?.Count ?? 0;
+                                            var isFull = activity.MaxParticipants.HasValue && currentParticipants >= activity.MaxParticipants.Value;
                                         }
+                                        <li>
+                                            <i class="bi bi-people"></i> <strong>Participants:</strong> 
+                                            @currentParticipants@(activity.MaxParticipants.HasValue ? $"/{activity.MaxParticipants.Value}" : "")
+                                            @if (isFull)
+                                            {
+                                                <span class="badge bg-danger ms-1">Complet</span>
+                                            }
+                                        </li>
                                     </ul>
+
+                                    @if (currentParticipants > 0)
+                                    {
+                                        <div class="mb-3">
+                                            <button class="btn btn-sm btn-info" type="button" data-bs-toggle="collapse" data-bs-target="#participants-@activity.Id">
+                                                <i class="bi bi-eye"></i> Voir les participants (@currentParticipants)
+                                            </button>
+                                            <div class="collapse mt-2" id="participants-@activity.Id">
+                                                <div class="card card-body">
+                                                    <h6>Liste des participants :</h6>
+                                                    <ul class="list-group list-group-flush">
+                                                        @foreach (var inscription in activity.Inscriptions ?? new List<UniHub.BL.Entities.Inscription>())
+                                                        {
+                                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                                <span>
+                                                                    <i class="bi bi-person-circle"></i> @inscription.User?.FullName
+                                                                </span>
+                                                                <small class="text-muted">
+                                                                    Inscrit le @inscription.InscriptionDate.ToString("dd/MM/yyyy HH:mm")
+                                                                </small>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
 
                                     <div class="d-flex gap-2">
                                         <a asp-action="EditActivity" asp-route-id="@activity.Id" class="btn btn-sm btn-warning">

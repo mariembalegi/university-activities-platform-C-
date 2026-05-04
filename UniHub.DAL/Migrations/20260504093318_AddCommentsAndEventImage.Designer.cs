@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UniHub.DAL;
 
@@ -11,9 +12,11 @@ using UniHub.DAL;
 namespace UniHub.DAL.Migrations
 {
     [DbContext(typeof(UniHubDbContext))]
-    partial class UniHubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260504093318_AddCommentsAndEventImage")]
+    partial class AddCommentsAndEventImage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -298,7 +301,7 @@ namespace UniHub.DAL.Migrations
                     b.ToTable("User", "Identity");
                 });
 
-            modelBuilder.Entity("UniHub.BL.Entities.Inscription", b =>
+            modelBuilder.Entity("UniHub.BL.Entities.Comment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -309,11 +312,15 @@ namespace UniHub.DAL.Migrations
                     b.Property<int>("ActivityId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("InscriptionDate")
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsConfirmed")
-                        .HasColumnType("bit");
+                    b.Property<DateTime?>("ModifiedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -321,12 +328,11 @@ namespace UniHub.DAL.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ActivityId");
+
                     b.HasIndex("UserId");
 
-                    b.HasIndex("ActivityId", "UserId")
-                        .IsUnique();
-
-                    b.ToTable("Inscriptions", "Identity");
+                    b.ToTable("Comments", "Identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -391,16 +397,16 @@ namespace UniHub.DAL.Migrations
                     b.Navigation("CreatedByUser");
                 });
 
-            modelBuilder.Entity("UniHub.BL.Entities.Inscription", b =>
+            modelBuilder.Entity("UniHub.BL.Entities.Comment", b =>
                 {
                     b.HasOne("UniHub.BL.Entities.Activity", "Activity")
-                        .WithMany("Inscriptions")
+                        .WithMany("Comments")
                         .HasForeignKey("ActivityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("UniHub.BL.Entities.ApplicationUser", "User")
-                        .WithMany("Inscriptions")
+                        .WithMany("Comments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -412,14 +418,14 @@ namespace UniHub.DAL.Migrations
 
             modelBuilder.Entity("UniHub.BL.Entities.Activity", b =>
                 {
-                    b.Navigation("Inscriptions");
+                    b.Navigation("Comments");
                 });
 
             modelBuilder.Entity("UniHub.BL.Entities.ApplicationUser", b =>
                 {
-                    b.Navigation("CreatedActivities");
+                    b.Navigation("Comments");
 
-                    b.Navigation("Inscriptions");
+                    b.Navigation("CreatedActivities");
                 });
 #pragma warning restore 612, 618
         }

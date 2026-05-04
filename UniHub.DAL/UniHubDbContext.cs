@@ -8,6 +8,7 @@ namespace UniHub.DAL
     public class UniHubDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<Activity>? Activities { get; set; }
+        public DbSet<Inscription>? Inscriptions { get; set; }
 
         public UniHubDbContext(DbContextOptions<UniHubDbContext> options)
             : base(options)
@@ -79,6 +80,26 @@ namespace UniHub.DAL
                     .WithMany(u => u.CreatedActivities)
                     .HasForeignKey(a => a.CreatedByUserId)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Configure Inscription
+            builder.Entity<Inscription>(entity =>
+            {
+                entity.ToTable("Inscriptions");
+
+                entity.HasOne(i => i.Activity)
+                    .WithMany(a => a.Inscriptions)
+                    .HasForeignKey(i => i.ActivityId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(i => i.User)
+                    .WithMany(u => u.Inscriptions)
+                    .HasForeignKey(i => i.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // Empêcher les inscriptions en double
+                entity.HasIndex(i => new { i.ActivityId, i.UserId })
+                    .IsUnique();
             });
         }
     }

@@ -3,10 +3,27 @@
     var myDeptActivities = ViewBag.MyDepartmentActivities as List<UniHub.BL.Entities.Activity>;
     var otherActivities = ViewBag.OtherActivities as List<UniHub.BL.Entities.Activity>;
     var userDept = (UniHub.BL.Entities.Department)ViewBag.UserDepartment;
+    var userInscriptions = ViewBag.UserInscriptions as List<int> ?? new List<int>();
 }
 
 <div class="container mt-4">
     <h1 class="mb-4"><i class="bi bi-house-door"></i> Dashboard Étudiant - Département @userDept</h1>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
 
     <!-- Activités de mon département -->
     <div class="card mb-4">
@@ -19,8 +36,17 @@
                 <div class="row">
                     @foreach (var activity in myDeptActivities)
                     {
+                        var currentParticipants = activity.Inscriptions?.Count ?? 0;
+                        var isRegistered = userInscriptions.Contains(activity.Id);
+                        var isFull = activity.MaxParticipants.HasValue && currentParticipants >= activity.MaxParticipants.Value;
+
                         <div class="col-md-6 mb-3">
                             <div class="card h-100 border-primary">
+                                @if (activity.EventImage != null)
+                                {
+                                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(activity.EventImage)" 
+                                         class="card-img-top" alt="@activity.Title" style="max-height: 200px; object-fit: cover;" />
+                                }
                                 <div class="card-body">
                                     <h5 class="card-title">@activity.Title</h5>
                                     <p class="card-text">@activity.Description</p>
@@ -34,12 +60,37 @@
                                         {
                                             <li><i class="bi bi-geo-alt"></i> <strong>Lieu:</strong> @activity.Location</li>
                                         }
-                                        @if (activity.MaxParticipants.HasValue)
-                                        {
-                                            <li><i class="bi bi-people"></i> <strong>Participants max:</strong> @activity.MaxParticipants</li>
-                                        }
-                                        <li><i class="bi bi-person"></i> <strong>Créé par:</strong> @activity.CreatedByUser.FullName</li>
+                                        <li>
+                                            <i class="bi bi-people"></i> <strong>Participants:</strong> 
+                                            @currentParticipants@(activity.MaxParticipants.HasValue ? $"/{activity.MaxParticipants.Value}" : "")
+                                            @if (isFull)
+                                            {
+                                                <span class="badge bg-danger ms-1">Complet</span>
+                                            }
+                                        </li>
+                                        <li><i class="bi bi-person"></i> <strong>Créé par:</strong> @activity.CreatedByUser?.FullName</li>
                                     </ul>
+
+                                    @if (isRegistered)
+                                    {
+                                        <form asp-controller="Student" asp-action="Unsubscribe" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="activityId" value="@activity.Id" />
+                                            <button type="submit" class="btn btn-danger btn-sm w-100">
+                                                <i class="bi bi-x-circle"></i> Se désinscrire
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-controller="Student" asp-action="Subscribe" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="activityId" value="@activity.Id" />
+                                            <button type="submit" class="btn btn-success btn-sm w-100" @(isFull ? "disabled" : "")>
+                                                <i class="bi bi-check-circle"></i> @(isFull ? "Complet" : "S'inscrire")
+                                            </button>
+                                        </form>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -66,11 +117,20 @@
                 <div class="row">
                     @foreach (var activity in otherActivities)
                     {
+                        var currentParticipants = activity.Inscriptions?.Count ?? 0;
+                        var isRegistered = userInscriptions.Contains(activity.Id);
+                        var isFull = activity.MaxParticipants.HasValue && currentParticipants >= activity.MaxParticipants.Value;
+
                         <div class="col-md-6 mb-3">
                             <div class="card h-100">
                                 <div class="card-header bg-light">
                                     <span class="badge bg-info">@activity.Department</span>
                                 </div>
+                                @if (activity.EventImage != null)
+                                {
+                                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(activity.EventImage)" 
+                                         class="card-img-top" alt="@activity.Title" style="max-height: 200px; object-fit: cover;" />
+                                }
                                 <div class="card-body">
                                     <h5 class="card-title">@activity.Title</h5>
                                     <p class="card-text">@activity.Description</p>
@@ -84,8 +144,37 @@
                                         {
                                             <li><i class="bi bi-geo-alt"></i> <strong>Lieu:</strong> @activity.Location</li>
                                         }
-                                        <li><i class="bi bi-person"></i> <strong>Créé par:</strong> @activity.CreatedByUser.FullName</li>
+                                        <li>
+                                            <i class="bi bi-people"></i> <strong>Participants:</strong> 
+                                            @currentParticipants@(activity.MaxParticipants.HasValue ? $"/{activity.MaxParticipants.Value}" : "")
+                                            @if (isFull)
+                                            {
+                                                <span class="badge bg-danger ms-1">Complet</span>
+                                            }
+                                        </li>
+                                        <li><i class="bi bi-person"></i> <strong>Créé par:</strong> @activity.CreatedByUser?.FullName</li>
                                     </ul>
+
+                                    @if (isRegistered)
+                                    {
+                                        <form asp-controller="Student" asp-action="Unsubscribe" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="activityId" value="@activity.Id" />
+                                            <button type="submit" class="btn btn-danger btn-sm w-100">
+                                                <i class="bi bi-x-circle"></i> Se désinscrire
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-controller="Student" asp-action="Subscribe" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="activityId" value="@activity.Id" />
+                                            <button type="submit" class="btn btn-success btn-sm w-100" @(isFull ? "disabled" : "")>
+                                                <i class="bi bi-check-circle"></i> @(isFull ? "Complet" : "S'inscrire")
+                                            </button>
+                                        </form>
+                                    }
                                 </div>
                             </div>
                         </div>

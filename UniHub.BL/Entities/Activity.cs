@@ -49,8 +49,13 @@ namespace UniHub.BL.Entities
         [Display(Name = "Créé par")]
         public string CreatedByUserId { get; set; }
 
+        [Display(Name = "Image de l'événement")]
+        public byte[]? EventImage { get; set; }
+
         // Navigation properties
         [ForeignKey("CreatedByUserId")]
         public virtual ApplicationUser CreatedByUser { get; set; }
+
+        public virtual ICollection<Inscription> Inscriptions { get; set; } = new List<Inscription>();
     }
 }
